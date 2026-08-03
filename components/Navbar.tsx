@@ -2,36 +2,41 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShieldAlert, Video, BookOpen, Cpu, Github, ExternalLink, Database } from 'lucide-react';
+import { ShieldCheck, Video, BookOpen, LayoutDashboard, Cpu, Zap, Activity, ExternalLink } from 'lucide-react';
 
 export default function Navbar() {
   const pathname = usePathname();
 
   const navItems = [
-    { name: 'Dashboard', href: '/', icon: Cpu },
-    { name: 'Create Presentation/Video', href: '/create', icon: Video },
-    { name: 'Security Guidelines', href: '/guidelines', icon: ShieldAlert },
-    { name: 'NotebookLM Studio', href: '/notebooklm', icon: BookOpen },
+    { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { name: 'Automated Creator', href: '/create', icon: Video },
+    { name: 'Security Directives', href: '/guidelines', icon: ShieldCheck },
+    { name: 'API Operations Studio', href: '/notebooklm', icon: BookOpen },
   ];
 
   return (
-    <nav className="sticky top-0 z-50 cyber-glass border-b border-gray-800 px-6 py-4">
+    <nav className="sticky top-0 z-50 bg-[#090d16]/90 backdrop-blur-md border-b border-gray-800/80 px-6 py-3.5">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        {/* Logo */}
+        {/* Brand */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyber-accent to-cyber-purple flex items-center justify-center text-black font-bold shadow-lg group-hover:scale-105 transition-transform">
-            <ShieldAlert className="w-6 h-6 text-black" />
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold shadow-md group-hover:scale-105 transition-transform">
+            <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-xl font-extrabold tracking-wider bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
-              CyberStudio
-            </span>
-            <span className="text-xs block text-cyan-400/80 font-mono">NotebookLM AI Engine</span>
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-black tracking-tight text-white mono-heading">
+                CyberStudio
+              </span>
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                API ACTIVE
+              </span>
+            </div>
+            <span className="text-[11px] block text-gray-400 font-mono">Automated NotebookLM Engine</span>
           </div>
         </Link>
 
-        {/* Navigation Links */}
-        <div className="flex items-center gap-1 bg-gray-900/80 p-1.5 rounded-xl border border-gray-800">
+        {/* Navigation */}
+        <div className="flex items-center gap-1 bg-gray-900/90 p-1 rounded-xl border border-gray-800">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -39,35 +44,25 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-mono font-medium transition-all ${
                   isActive
-                    ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
-                    : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50'
+                    ? 'bg-blue-600/20 text-blue-400 border border-blue-500/40 font-semibold'
+                    : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/60'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-400' : 'text-gray-400'}`} />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-blue-400' : 'text-gray-400'}`} />
                 {item.name}
               </Link>
             );
           })}
         </div>
 
-        {/* Connection Status Badges */}
+        {/* System Badges */}
         <div className="flex items-center gap-3">
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-900 border border-gray-800 text-xs font-mono">
-            <Database className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-            <span className="text-gray-300">Supabase: <span className="text-emerald-400">Connected</span></span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-xs font-mono text-emerald-300">
+            <Activity className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+            <span>NotebookLM API: <strong className="text-emerald-400">Connected</strong></span>
           </div>
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-gray-900 hover:bg-gray-800 border border-gray-700 text-xs text-gray-300 transition-colors"
-          >
-            <Github className="w-4 h-4" />
-            <span>GitHub</span>
-            <ExternalLink className="w-3 h-3 text-gray-500" />
-          </a>
         </div>
       </div>
     </nav>

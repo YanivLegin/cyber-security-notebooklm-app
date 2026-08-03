@@ -1,98 +1,202 @@
 'use client';
 
 import { useState } from 'react';
-import { BookOpen, Sparkles, ExternalLink, Copy, Check, ShieldCheck, Play, FileText, ArrowUpRight } from 'lucide-react';
+import { BookOpen, Zap, Server, ShieldCheck, CheckCircle2, Play, RefreshCw, Key, Globe, Terminal, ArrowUpRight } from 'lucide-react';
 import { GLOBAL_CYBER_GUIDELINES, generateNotebookLMSourceDoc } from '@/lib/securityGuidelines';
 
 export default function NotebookLMStudio() {
-  const [copiedDoc, setCopiedDoc] = useState(false);
-  const sampleDoc = generateNotebookLMSourceDoc(
-    'Enterprise Cybersecurity Awareness & Incident Escalation',
-    'All Corporate Employees & Vendors',
+  const [activeTab, setActiveTab] = useState<'enterprise' | 'community'>('enterprise');
+  
+  // Enterprise API state
+  const [projectId, setProjectId] = useState('cyber-security-enterprise-2026');
+  const [location, setLocation] = useState('us');
+  const [accessToken, setAccessToken] = useState('ya29.a0Axoo-placeholder-token');
+
+  // Community REST API state
+  const [communityUrl, setCommunityUrl] = useState('http://localhost:8000');
+  const [apiKey, setApiKey] = useState('cyber_studio_key_2026');
+
+  // Execution state
+  const [loading, setLoading] = useState(false);
+  const [apiResponse, setApiResponse] = useState<any>(null);
+
+  const sampleGroundTruth = generateNotebookLMSourceDoc(
+    'Enterprise Cyber Threat Briefing & AI Safety Directives',
+    'All Corporate Staff',
     'presentation',
     GLOBAL_CYBER_GUIDELINES
   );
 
-  const handleCopyDoc = () => {
-    navigator.clipboard.writeText(sampleDoc);
-    setCopiedDoc(true);
-    setTimeout(() => setCopiedDoc(false), 2000);
+  const handleTestApiCall = async () => {
+    setLoading(true);
+    setApiResponse(null);
+
+    try {
+      const res = await fetch('/api/notebooklm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: 'Automated API Security Briefing',
+          mediaType: 'presentation',
+          mode: activeTab === 'enterprise' ? 'enterprise_api' : 'community_api',
+          gcpProjectId: projectId,
+          gcpAccessToken: accessToken,
+        }),
+      });
+
+      const data = await res.json();
+      setApiResponse(data);
+    } catch (err: any) {
+      setApiResponse({ error: err.message || 'API request failed.' });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-xs font-mono text-purple-300 mb-2">
-          <BookOpen className="w-3.5 h-3.5" />
-          Google NotebookLM Integration Center
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-xs font-mono text-blue-400 mb-2">
+          <Server className="w-3.5 h-3.5" />
+          Automated API Operations Center
         </div>
-        <h1 className="text-3xl font-extrabold text-white">NotebookLM Export & Audio Overview Studio</h1>
+        <h1 className="text-3xl font-extrabold text-white tracking-tight">NotebookLM API Operations Studio</h1>
         <p className="text-gray-400 text-sm mt-1">
-          Bridge your Supabase cybersecurity guidelines directly into Google NotebookLM for AI audio overview podcasts and slide generation.
+          Direct programmatic interface connecting your security directives to NotebookLM via official Enterprise GCP & Community REST APIs.
         </p>
       </div>
 
-      {/* Workflow Steps Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="cyber-glass rounded-2xl p-6 border-cyan-500/30 space-y-3">
-          <div className="w-8 h-8 rounded-lg bg-cyan-500 text-black font-extrabold flex items-center justify-center font-mono">1</div>
-          <h3 className="text-base font-bold text-white">Export Ground Truth</h3>
-          <p className="text-xs text-gray-300 leading-relaxed">
-            Generate your formatted security source document containing non-negotiable cyber directives.
-          </p>
+      {/* API Selection Tabs */}
+      <div className="flex border-b border-gray-800 gap-6 text-sm font-mono">
+        <button
+          onClick={() => setActiveTab('enterprise')}
+          className={`pb-3 flex items-center gap-2 transition-all border-b-2 ${
+            activeTab === 'enterprise'
+              ? 'border-blue-500 text-blue-400 font-bold'
+              : 'border-transparent text-gray-400 hover:text-gray-200'
+          }`}
+        >
+          <Globe className="w-4 h-4" />
+          Official GCP Gemini Enterprise API
+        </button>
+        <button
+          onClick={() => setActiveTab('community')}
+          className={`pb-3 flex items-center gap-2 transition-all border-b-2 ${
+            activeTab === 'community'
+              ? 'border-blue-500 text-blue-400 font-bold'
+              : 'border-transparent text-gray-400 hover:text-gray-200'
+          }`}
+        >
+          <Terminal className="w-4 h-4" />
+          Community REST API (notebooklm-py)
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Credentials & Config Panel */}
+        <div className="lg:col-span-6 space-y-6">
+          {activeTab === 'enterprise' ? (
+            <div className="panel-card p-6 space-y-4">
+              <h2 className="text-base font-bold text-white mono-heading flex items-center gap-2">
+                <Key className="w-4 h-4 text-blue-400" />
+                GCP Discovery Engine Credentials
+              </h2>
+
+              <div>
+                <label className="block text-xs font-mono text-gray-300 mb-1">GCP Project Number / ID</label>
+                <input
+                  type="text"
+                  value={projectId}
+                  onChange={(e) => setProjectId(e.target.value)}
+                  className="w-full bg-gray-900 border border-gray-700/80 rounded-xl px-4 py-2 text-sm text-white font-mono focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-gray-300 mb-1">Multi-Region Location</label>
+                <select
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full bg-gray-900 border border-gray-700/80 rounded-xl px-4 py-2 text-sm text-white font-mono focus:outline-none focus:border-blue-500"
+                >
+                  <option value="us">us (United States Multi-Region)</option>
+                  <option value="eu">eu (European Union Multi-Region)</option>
+                  <option value="global">global (Global Location)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-gray-300 mb-1">Bearer OAuth Access Token</label>
+                <input
+                  type="password"
+                  value={accessToken}
+                  onChange={(e) => setAccessToken(e.target.value)}
+                  className="w-full bg-gray-900 border border-gray-700/80 rounded-xl px-4 py-2 text-sm text-white font-mono focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-gray-900/90 border border-gray-800 text-[11px] font-mono text-gray-400">
+                Endpoint: <span className="text-blue-300">https://{location}-discoveryengine.googleapis.com/v1alpha/projects/{projectId}/locations/{location}/notebooks</span>
+              </div>
+            </div>
+          ) : (
+            <div className="panel-card p-6 space-y-4">
+              <h2 className="text-base font-bold text-white mono-heading flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-blue-400" />
+                Community REST Server Settings
+              </h2>
+
+              <div>
+                <label className="block text-xs font-mono text-gray-300 mb-1">REST API Service Base URL</label>
+                <input
+                  type="text"
+                  value={communityUrl}
+                  onChange={(e) => setCommunityUrl(e.target.value)}
+                  className="w-full bg-gray-900 border border-gray-700/80 rounded-xl px-4 py-2 text-sm text-white font-mono focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-gray-300 mb-1">X-API-Key Header</label>
+                <input
+                  type="password"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  className="w-full bg-gray-900 border border-gray-700/80 rounded-xl px-4 py-2 text-sm text-white font-mono focus:outline-none focus:border-blue-500"
+                />
+              </div>
+            </div>
+          )}
+
           <button
-            onClick={handleCopyDoc}
-            className="w-full py-2 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-mono font-bold flex items-center justify-center gap-2 hover:bg-cyan-500/30 transition-colors"
+            type="button"
+            disabled={loading}
+            onClick={handleTestApiCall}
+            className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold font-mono text-xs flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
           >
-            {copiedDoc ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-            {copiedDoc ? 'Copied Source!' : 'Copy Ground Truth'}
+            <Zap className="w-4 h-4 text-amber-300" />
+            {loading ? 'Executing API Call...' : 'Test Automated API Connection'}
           </button>
         </div>
 
-        <div className="cyber-glass rounded-2xl p-6 border-purple-500/30 space-y-3">
-          <div className="w-8 h-8 rounded-lg bg-purple-500 text-white font-extrabold flex items-center justify-center font-mono">2</div>
-          <h3 className="text-base font-bold text-white">Upload to NotebookLM</h3>
-          <p className="text-xs text-gray-300 leading-relaxed">
-            Open Google NotebookLM, add a new source, and paste the copied text directly into the source editor.
-          </p>
-          <a
-            href="https://notebooklm.google.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full py-2 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/40 text-xs font-mono font-bold flex items-center justify-center gap-2 hover:bg-purple-500/30 transition-colors"
-          >
-            Open NotebookLM <ArrowUpRight className="w-3.5 h-3.5" />
-          </a>
-        </div>
+        {/* Right API Response Inspector */}
+        <div className="lg:col-span-6 space-y-6">
+          <div className="panel-card p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-800 pb-3">
+              <h2 className="text-base font-bold text-white mono-heading flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-blue-400" />
+                API Telemetry & Response Viewer
+              </h2>
+              <span className="text-[11px] font-mono text-emerald-400">AUTOMATED REST RESPONSE</span>
+            </div>
 
-        <div className="cyber-glass rounded-2xl p-6 border-emerald-500/30 space-y-3">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500 text-black font-extrabold flex items-center justify-center font-mono">3</div>
-          <h3 className="text-base font-bold text-white">Generate Audio & Slides</h3>
-          <p className="text-xs text-gray-300 leading-relaxed">
-            Click "Generate Audio Overview" or request a study guide outline. NotebookLM will strictly enforce your security rules.
-          </p>
-          <div className="py-2 px-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs font-mono flex items-center gap-2">
-            <Play className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            Audio Overview Ready
+            <pre className="bg-gray-950 text-cyan-300 font-mono text-xs p-4 rounded-xl border border-gray-800 max-h-96 overflow-y-auto leading-relaxed">
+              {apiResponse
+                ? JSON.stringify(apiResponse, null, 2)
+                : '// Click "Test Automated API Connection" to trigger direct API dispatch...'}
+            </pre>
           </div>
-        </div>
-      </div>
-
-      {/* Ground Truth Source Editor / Inspection */}
-      <div className="cyber-glass rounded-2xl p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <FileText className="w-5 h-5 text-cyan-400" />
-            Current Ground Truth Export Text
-          </h2>
-          <span className="text-xs font-mono text-cyan-400">Ready for Google NotebookLM</span>
-        </div>
-
-        <div className="bg-gray-950 rounded-xl p-4 border border-gray-800">
-          <pre className="text-xs font-mono text-cyan-300 whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto">
-            {sampleDoc}
-          </pre>
         </div>
       </div>
     </div>
