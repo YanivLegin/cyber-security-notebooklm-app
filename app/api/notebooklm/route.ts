@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { generateNotebookLMSourceDoc, GLOBAL_CYBER_GUIDELINES } from '@/lib/securityGuidelines';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
