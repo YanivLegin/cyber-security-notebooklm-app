@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ShieldAlert, Plus, CheckCircle, AlertTriangle, Lock, ShieldCheck, Cpu } from 'lucide-react';
+import { ShieldAlert, Plus, CheckCircle, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { GLOBAL_CYBER_GUIDELINES } from '@/lib/securityGuidelines';
 
 export default function GuidelinesManager() {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { BookOpen, Zap, Server, ShieldCheck, CheckCircle2, Play, RefreshCw, Key, Globe, Terminal, Activity } from 'lucide-react';
+import { Zap, Server, Key, Globe, Terminal, Activity } from 'lucide-react';
 import { GLOBAL_CYBER_GUIDELINES, generateNotebookLMSourceDoc } from '@/lib/securityGuidelines';
 
 export default function NotebookLMStudio() {

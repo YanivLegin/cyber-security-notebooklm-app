@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Video, Presentation, Mic, ShieldCheck, Zap, CheckCircle, Loader2, Server, Key, AlertCircle, Activity, Sparkles } from 'lucide-react';
+import { Video, Presentation, Mic, Zap, Loader2, Activity, Sparkles } from 'lucide-react';
 import { GLOBAL_CYBER_GUIDELINES } from '@/lib/securityGuidelines';
 import SlideDeckViewer from '@/components/SlideDeckViewer';
 import VideoStoryboardViewer from '@/components/VideoStoryboardViewer';

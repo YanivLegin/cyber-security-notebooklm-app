@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ShieldCheck, Video, Zap, ArrowRight, BookOpen, ShieldAlert, Activity, CheckCircle2, Terminal, Radio, Cpu, Lock } from 'lucide-react';
+import { Zap, ArrowRight, ShieldAlert, CheckCircle2, Terminal, Radio } from 'lucide-react';
 import { GLOBAL_CYBER_GUIDELINES } from '@/lib/securityGuidelines';
 
 export default function CommandCenterDashboard() {
