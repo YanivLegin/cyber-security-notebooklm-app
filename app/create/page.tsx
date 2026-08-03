@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Video, Presentation, Mic, ShieldCheck, Zap, CheckCircle, Loader2, Sparkles, Server, ArrowRight, Play, FileCheck, RefreshCw } from 'lucide-react';
+import { Video, Presentation, Mic, ShieldCheck, Zap, CheckCircle, Loader2, Server, Key, AlertCircle } from 'lucide-react';
 import { GLOBAL_CYBER_GUIDELINES } from '@/lib/securityGuidelines';
 
 export default function AutomatedCreateProject() {
@@ -10,6 +10,10 @@ export default function AutomatedCreateProject() {
   const [targetAudience, setTargetAudience] = useState('All Corporate Employees');
   const [selectedRuleIds, setSelectedRuleIds] = useState<string[]>(['g-1', 'g-2', 'g-3', 'g-4']);
   const [apiMode, setApiMode] = useState<'preview' | 'enterprise_api' | 'community_api'>('preview');
+
+  // Credentials
+  const [gcpProjectId, setGcpProjectId] = useState('');
+  const [gcpAccessToken, setGcpAccessToken] = useState('');
 
   // Execution state
   const [isExecuting, setIsExecuting] = useState(false);
@@ -33,10 +37,10 @@ export default function AutomatedCreateProject() {
     ]);
 
     try {
-      await new Promise((r) => setTimeout(r, 600));
+      await new Promise((r) => setTimeout(r, 400));
       setExecutionLogs((prev) => [
         ...prev,
-        '📡 Sending payload to /api/notebooklm endpoint...',
+        `📡 Sending payload (${apiMode.toUpperCase()}) to /api/notebooklm endpoint...`,
       ]);
 
       const res = await fetch('/api/notebooklm', {
@@ -48,18 +52,28 @@ export default function AutomatedCreateProject() {
           mediaType,
           selectedGuidelineIds: selectedRuleIds,
           mode: apiMode,
+          gcpProjectId: gcpProjectId || undefined,
+          gcpAccessToken: gcpAccessToken || undefined,
         }),
       });
 
       const data = await res.json();
-      await new Promise((r) => setTimeout(r, 700));
+      await new Promise((r) => setTimeout(r, 400));
 
       if (res.ok) {
-        setExecutionLogs((prev) => [
-          ...prev,
-          '✅ Ground Truth compiled & validated against compliance policies.',
-          '🎉 NotebookLM API execution complete! Zero manual copy-pasting required.',
-        ]);
+        if (data.warning) {
+          setExecutionLogs((prev) => [
+            ...prev,
+            `⚠️ Notice: ${data.warning}`,
+            '✅ Ground Truth compiled successfully via Direct API fallback mode.',
+          ]);
+        } else {
+          setExecutionLogs((prev) => [
+            ...prev,
+            '✅ Ground Truth compiled & validated against compliance policies.',
+            '🎉 NotebookLM API execution complete! Zero manual copy-pasting required.',
+          ]);
+        }
         setApiResult(data);
       } else {
         setExecutionLogs((prev) => [
@@ -83,11 +97,11 @@ export default function AutomatedCreateProject() {
       <div>
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-xs font-mono text-blue-400 mb-2">
           <Zap className="w-3.5 h-3.5" />
-          Zero-Manual-Labor Automated Execution
+          Automated Execution Engine
         </div>
         <h1 className="text-3xl font-extrabold text-white tracking-tight">Automated AI Presentation & Video Creator</h1>
         <p className="text-gray-400 text-sm mt-1">
-          Configure security directives and trigger NotebookLM generation directly via API with zero copy-pasting.
+          Configure security directives and trigger NotebookLM generation directly via API.
         </p>
       </div>
 
@@ -206,9 +220,9 @@ export default function AutomatedCreateProject() {
               <div>
                 <h2 className="text-base font-bold text-white mono-heading flex items-center gap-2">
                   <Server className="w-5 h-5 text-blue-400" />
-                  API Direct Trigger
+                  API Execution Mode
                 </h2>
-                <p className="text-xs text-gray-400 font-mono">Automated execution via NotebookLM API</p>
+                <p className="text-xs text-gray-400 font-mono">Select how the API dispatches requests</p>
               </div>
 
               {/* API Mode Toggle */}
@@ -216,19 +230,52 @@ export default function AutomatedCreateProject() {
                 <button
                   type="button"
                   onClick={() => setApiMode('preview')}
-                  className={`px-2.5 py-1 rounded ${apiMode === 'preview' ? 'bg-blue-600 text-white font-bold' : 'text-gray-400'}`}
+                  className={`px-3 py-1 rounded ${apiMode === 'preview' ? 'bg-blue-600 text-white font-bold' : 'text-gray-400'}`}
                 >
                   Direct API
                 </button>
                 <button
                   type="button"
                   onClick={() => setApiMode('enterprise_api')}
-                  className={`px-2.5 py-1 rounded ${apiMode === 'enterprise_api' ? 'bg-blue-600 text-white font-bold' : 'text-gray-400'}`}
+                  className={`px-3 py-1 rounded ${apiMode === 'enterprise_api' ? 'bg-blue-600 text-white font-bold' : 'text-gray-400'}`}
                 >
                   GCP Enterprise
                 </button>
               </div>
             </div>
+
+            {/* If Enterprise Mode Selected, show optional GCP inputs */}
+            {apiMode === 'enterprise_api' && (
+              <div className="p-4 rounded-xl bg-gray-900/90 border border-blue-500/30 space-y-3 font-mono text-xs animate-fadeIn">
+                <div className="text-blue-300 font-bold flex items-center gap-1.5">
+                  <Key className="w-3.5 h-3.5" />
+                  Optional GCP Enterprise Credentials:
+                </div>
+                <div>
+                  <label className="block text-[11px] text-gray-400 mb-1">GCP Project ID / Number</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 1234567890 (or configure process.env.GCP_PROJECT_ID)"
+                    value={gcpProjectId}
+                    onChange={(e) => setGcpProjectId(e.target.value)}
+                    className="w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] text-gray-400 mb-1">Bearer Access Token</label>
+                  <input
+                    type="password"
+                    placeholder="OAuth Bearer Token (or configure process.env.GCP_ACCESS_TOKEN)"
+                    value={gcpAccessToken}
+                    onChange={(e) => setGcpAccessToken(e.target.value)}
+                    className="w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div className="text-[10px] text-gray-400">
+                  * Note: If credentials are not provided, the API automatically falls back to Direct API mode without failing.
+                </div>
+              </div>
+            )}
 
             {/* Execute Button */}
             <button
@@ -272,6 +319,12 @@ export default function AutomatedCreateProject() {
                   <CheckCircle className="w-4 h-4 text-emerald-400" />
                   NotebookLM Output Generated via API!
                 </div>
+                {apiResult.warning && (
+                  <div className="p-2 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] flex items-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0 text-amber-400" />
+                    <span>{apiResult.warning}</span>
+                  </div>
+                )}
                 <div className="text-gray-300 space-y-1 text-[11px]">
                   <div>• Project: <span className="text-white">{apiResult.title}</span></div>
                   <div>• Bound Directives: <span className="text-emerald-400">{apiResult.enforcedDirectivesCount} Enforced</span></div>
